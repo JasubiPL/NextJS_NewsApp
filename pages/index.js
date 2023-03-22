@@ -1,23 +1,11 @@
 import PageLayout from '@/components/PageLayout'
-import { useEffect, useState } from 'react'
 import styles from '../styles/Home.module.css'
 
-export default function Home() {
-  const [articles, setArticles] = useState([])
-
-  useEffect(() =>{
-    fetch('https://newsapi.org/v2/everything?q=tesla&from=2023-02-21&sortBy=publishedAt&apiKey=eb900029ae884c249c4ebc04ce465e17')
-    .then(res => res.json())
-    .then(response =>{
-      const {articles} = response
-      setArticles(articles)
-    })
-  },[])
-
+export default function Home({articles}) {
   return (
     <PageLayout title='Home'>
       <div className={styles.container}>
-        {articles.length === 0 && <p>Loading...</p>}
+        {articles.length === 0 && <p>No hay Noticias</p>}
         {articles.length > 0 && articles.map((article, index) =>(
           <div key={index}>
             <img 
@@ -31,4 +19,15 @@ export default function Home() {
       </div>
     </PageLayout>
   )
+}
+
+//Hacemos el Fetchin de datos del lado del servidor para que se renderice mas rapido y para optimizacion del CEO
+export async function getServerSideProps() {
+  const response = await fetch('https://newsapi.org/v2/everything?q=tesla&from=2023-02-22&sortBy=publishedAt&apiKey=eb900029ae884c249c4ebc04ce465e17')
+  const { articles } = await response.json()
+  return{
+    props:{
+      articles
+    }
+  }
 }
