@@ -1,4 +1,5 @@
 import PageLayout from '@/components/PageLayout'
+import Image from 'next/image'
 import styles from '../styles/Home.module.css'
 
 export default function Home({articles}) {
@@ -8,9 +9,12 @@ export default function Home({articles}) {
         {articles.length === 0 && <p>No hay Noticias</p>}
         {articles.length > 0 && articles.map((article, index) =>(
           <div key={index}>
-            <img 
+            <Image
               alt={`Image for the article ${article.title}`} 
-              src={article.urlToImage} 
+              src={article.urlToImage ? article.urlToImage : ''}
+              width={450}
+              height={300}
+              layout='responsive'
             />
             <h2>{article.title}</h2>
             <p>{article.description}</p>
@@ -45,7 +49,7 @@ getServerSideProps()
 */
 
  export async function getServerSideProps() {
-   const response = await fetch('https://newsapi.org/v2/everything?q=tesla&from=2023-02-22&sortBy=publishedAt&apiKey=eb900029ae884c249c4ebc04ce465e17')
+   const response = await fetch('https://newsapi.org/v2/top-headlines?sources=techcrunch&apiKey=eb900029ae884c249c4ebc04ce465e17')
    const { articles } = await response.json()
    return{
      props:{
